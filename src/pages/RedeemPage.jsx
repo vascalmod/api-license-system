@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import HCaptcha from '@hcaptcha/react-hcaptcha'
+import Turnstile from '@marsidev/react-turnstile'
 
 function RedeemPage() {
   const [searchParams] = useSearchParams()
@@ -63,11 +63,11 @@ function RedeemPage() {
     }
   }, [tokenValid, countdown])
 
-  const handleCaptchaVerify = (token) => {
+  const handleTurnstileVerify = (token) => {
     setCaptchaToken(token)
   }
 
-  const handleCaptchaExpire = () => {
+  const handleTurnstileExpire = () => {
     setCaptchaToken(null)
   }
 
@@ -120,7 +120,7 @@ function RedeemPage() {
       <div className="w-full bg-gray-800 p-2 text-center text-sm text-gray-400">
         <span className="text-xs">Advertisement</span>
         {/* PopAds Top Banner - Replace with actual PopAds code */}
-        <div className="h-16 bg-gray-700 flex items-center justify-center">
+        <div className="h-16 bg-gray-700 flex items-center justify-center text-gray-400">
           PopAds Top Banner (728x90)
         </div>
       </div>
@@ -155,16 +155,16 @@ function RedeemPage() {
                 <p className="text-gray-300 mb-2">Token Status: <span className="text-green-400">Valid</span></p>
                 
                 <div className="mb-4">
-                <HCaptcha
-                  ref={captchaRef}
-                  sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY || '8a921660-b2f6-4556-a83c-0db2fde4cf30'}
-                  onVerify={handleCaptchaVerify}
-                  onExpire={handleCaptchaExpire}
-                />
-                {captchaToken && (
-                  <p className="text-green-400 text-sm mt-2">✓ CAPTCHA Verified</p>
-                )}
-              </div>
+                  <Turnstile
+                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                    onVerify={handleTurnstileVerify}
+                    onExpire={handleTurnstileExpire}
+                    options={{ theme: 'dark' }}
+                  />
+                  {captchaToken && (
+                    <p className="text-green-400 text-sm mt-2">✓ Verification Complete</p>
+                  )}
+                </div>
 
                 {!canGenerate && (
                   <p className="text-gray-400 text-center mb-4">
