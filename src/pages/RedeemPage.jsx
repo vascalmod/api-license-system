@@ -6,6 +6,7 @@ function RedeemPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const token = searchParams.get('token')
+  const captchaRef = useRef(null)
   
   const [tokenValid, setTokenValid] = useState(null)
   const [captchaToken, setCaptchaToken] = useState(null)
