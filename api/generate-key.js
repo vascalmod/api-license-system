@@ -7,7 +7,13 @@ const supabase = createClient(
 )
 
 async function verifyHCaptcha(token, ip) {
-  if (!token || !process.env.HCAPTCHA_SECRET) return false
+  if (!token) return false
+  
+  // Skip verification if no secret configured (dev mode)
+  if (!process.env.HCAPTCHA_SECRET) {
+    console.log('HCAPTCHA_SECRET not set, skipping verification')
+    return true
+  }
   
   try {
     const res = await fetch('https://api.hcaptcha.com/siteverify', {
@@ -20,8 +26,10 @@ async function verifyHCaptcha(token, ip) {
       })
     })
     const data = await res.json()
+    console.log('hCaptcha verification result:', data)
     return data.success === true
-  } catch {
+  } catch (err) {
+    console.error('hCaptcha verification error:', err)
     return false
   }
 }
@@ -54,24 +62,25 @@ function generateApiKey() {
 }
 
 export default async function handler(req, res) {
+  // Add CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'POST')
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { token, captcha_token, captcha_verified } = req.body
+  const { token, captcha_token } = req.body
   const ip_address = req.headers['x-forwarded-for'] || req.connection.remoteAddress
 
-  // Check if captcha was verified (either via token or simple flag)
-  if (!token || (!captcha_token && !captcha_verified)) {
+  if (!token || !captcha_token) {
     return res.status(400).json({ error: 'Token and CAPTCHA verification required' })
   }
 
-  // Verify hCaptcha if token provided
-  if (captcha_token) {
-    const captchaValid = await verifyHCaptcha(captcha_token, ip_address)
-    if (!captchaValid) {
-      return res.status(400).json({ error: 'CAPTCHA verification failed' })
-    }
+  // Verify hCaptcha
+  const captchaValid = await verifyHCaptcha(captcha_token, ip_address)
+  if (!captchaValid) {
+    return res.status(400).json({ error: 'CAPTCHA verification failed' })
   }
 
   // Rate limiting
