@@ -6,8 +6,18 @@ const supabase = createClient(
 )
 
 export default async function handler(req, res) {
+  // Add CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'POST')
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  // Check environment variables
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('Missing environment variables')
+    return res.status(500).json({ error: 'Server configuration error' })
   }
 
   const { token } = req.body
@@ -25,6 +35,7 @@ export default async function handler(req, res) {
       .single()
 
     if (error || !data) {
+      console.error('Token lookup error:', error)
       return res.status(404).json({ error: 'Invalid token' })
     }
 
@@ -38,6 +49,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ valid: true, token: data.token })
   } catch (err) {
-    return res.status(500).json({ error: 'Internal server error' })
+    console.error('Server error:', err)
+    return res.status(500).json({ error: 'Internal server error: ' + err.message })
   }
 }

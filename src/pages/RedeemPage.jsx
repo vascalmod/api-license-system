@@ -46,9 +46,10 @@ function RedeemPage() {
           setError(data.error || 'Invalid token')
         }
       })
-      .catch(() => {
+      .catch((err) => {
         setTokenValid(false)
-        setError('Failed to validate token')
+        setError('Failed to validate token: ' + (err.message || 'Server error'))
+        console.error('Token validation error:', err)
       })
   }, [token])
 
