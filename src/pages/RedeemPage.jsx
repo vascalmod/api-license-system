@@ -27,7 +27,7 @@ function RedeemPage() {
         }
         return
       }
-      setError('No token provided. Please use a valid link.')
+      setError('No token provided. Please use a valid link with ?token=xxx')
       return
     }
 
