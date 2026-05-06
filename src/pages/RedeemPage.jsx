@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import Turnstile from '@marsidev/react-turnstile'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 function RedeemPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const token = searchParams.get('token')
-  const captchaRef = useRef(null)
   
   const [tokenValid, setTokenValid] = useState(null)
   const [captchaToken, setCaptchaToken] = useState(null)
@@ -155,14 +154,14 @@ function RedeemPage() {
                 <p className="text-gray-300 mb-2">Token Status: <span className="text-green-400">Valid</span></p>
                 
                 <div className="mb-4">
-                  <Turnstile
-                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-                    onVerify={handleTurnstileVerify}
-                    onExpire={handleTurnstileExpire}
-                    options={{ theme: 'dark' }}
+                  <HCaptcha
+                    ref={captchaRef}
+                    sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY || '8a921660-b2f6-4556-a83c-0db2fde4cf30'}
+                    onVerify={handleCaptchaVerify}
+                    onExpire={handleCaptchaExpire}
                   />
                   {captchaToken && (
-                    <p className="text-green-400 text-sm mt-2">✓ Verification Complete</p>
+                    <p className="text-green-400 text-sm mt-2">✓ CAPTCHA Verified</p>
                   )}
                 </div>
 
