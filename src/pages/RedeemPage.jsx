@@ -173,9 +173,9 @@ function RedeemPage() {
 
                 <button
                   onClick={handleGenerateKey}
-                  disabled={!canGenerate || !captchaVerified || loading}
+                  disabled={!canGenerate || !captchaToken || loading}
                   className={`w-full p-4 rounded font-bold text-lg ${
-                    canGenerate && captchaVerified && !loading
+                    canGenerate && captchaToken && !loading
                       ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700'
                       : 'bg-gray-600 cursor-not-allowed'
                   }`}
