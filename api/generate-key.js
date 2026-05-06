@@ -58,17 +58,20 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { token, captcha_token } = req.body
+  const { token, captcha_token, captcha_verified } = req.body
   const ip_address = req.headers['x-forwarded-for'] || req.connection.remoteAddress
 
-  if (!token || !captcha_token) {
+  // Check if captcha was verified (either via token or simple flag)
+  if (!token || (!captcha_token && !captcha_verified)) {
     return res.status(400).json({ error: 'Token and CAPTCHA verification required' })
   }
 
-  // Verify hCaptcha
-  const captchaValid = await verifyHCaptcha(captcha_token, ip_address)
-  if (!captchaValid) {
-    return res.status(400).json({ error: 'CAPTCHA verification failed' })
+  // Verify hCaptcha if token provided
+  if (captcha_token) {
+    const captchaValid = await verifyHCaptcha(captcha_token, ip_address)
+    if (!captchaValid) {
+      return res.status(400).json({ error: 'CAPTCHA verification failed' })
+    }
   }
 
   // Rate limiting

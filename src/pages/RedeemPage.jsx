@@ -89,16 +89,15 @@ function RedeemPage() {
       return
     }
 
-    try {
-      const response = await fetch('/api/generate-key', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          token: tokenToUse, 
-          captcha_token: captchaToken,
-          captcha_verified: true 
+      try {
+        const response = await fetch('/api/generate-key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            token: tokenToUse, 
+            captcha_token: captchaToken 
+          })
         })
-      })
 
       const data = await response.json()
 
