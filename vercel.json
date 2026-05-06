@@ -19,8 +19,12 @@
       "dest": "/api/$1"
     },
     {
+      "src": "/(.*)\\.(css|js|png|jpg|svg|ico|woff|woff2|ttf|eot|gif|webp)$",
+      "dest": "/dist/$1.$2"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/dist/index.html"
     }
   ]
 }
