@@ -63,11 +63,11 @@ function RedeemPage() {
     }
   }, [tokenValid, countdown])
 
-  const handleTurnstileVerify = (token) => {
+  const handleCaptchaVerify = (token) => {
     setCaptchaToken(token)
   }
 
-  const handleTurnstileExpire = () => {
+  const handleCaptchaExpire = () => {
     setCaptchaToken(null)
   }
 
